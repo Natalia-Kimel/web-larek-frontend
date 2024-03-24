@@ -1,3 +1,4 @@
+
 # Проектная работа "Веб-ларек"
 
 Стек: HTML, SCSS, TS, Webpack
@@ -123,3 +124,4 @@ CLOSE_ MODAL = 'modal:close'
 OPEN_BASKET  = 'basket:open',
 SET_PAYMENT = 'payment:set'
 };
+![Untitled Diagram drawio (1)](https://github.com/Natalia-Kimel/web-larek-frontend/assets/138134586/7bd28608-a9c5-4c3c-8f93-c414ae08311f)
