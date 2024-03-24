@@ -1,5 +1,5 @@
 import { IAppState, IItemCard, IOrder, IOrderForm, FormErrors } from "../../types";
-import { Model } from "./base/model";
+import { Model } from "./base/Model";
 
 export class AppState extends Model<IAppState> {
     basket: string[];
