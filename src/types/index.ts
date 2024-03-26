@@ -1,10 +1,10 @@
 export type ItemCategory = 'софт-скил' | 'другое' | 'дополнительное' | 'кнопка' | 'хард-скил';
-export type PaymentMethod = 'онлайн' | 'при получении';
 
 export type FormErrors = Partial<Record<keyof IOrder, string>>;
 
-export type IBasketItem = Pick<IItemCard, 'id' | 'title' | 'price'>;
-
+export type BasketItemIndex = {
+	index: number;
+};
 
 export interface IItemCard {
     id: string;
@@ -21,7 +21,7 @@ export interface IItemList {
 }
 
 export interface IBasket {
-    item: IBasketItem[];
+    item: IItemCard[];
     price: number;
 }
 
@@ -29,6 +29,7 @@ export interface IOrderForm {
     address: string;
     email: string;
     phone: string;
+    button: string;
 }
 
 export interface IOrder extends IOrderForm {

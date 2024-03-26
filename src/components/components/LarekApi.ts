@@ -1,4 +1,4 @@
-import { Api } from "./base/api";
+import { Api } from "./base/Api";
 import { IItemCard, IItemList, IOrderResult, IOrder } from "../../types";
 
 export class LarekApi extends Api {
