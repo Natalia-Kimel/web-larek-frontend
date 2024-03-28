@@ -2,7 +2,9 @@ import { Api } from "./base/Api";
 import { IItemCard, IItemList, IOrderResult, IOrder } from "../../types";
 
 export class LarekApi extends Api {
-	constructor(baseUrl: string, options: RequestInit) {
+	readonly cdn: string;
+
+	constructor(cdn: string, baseUrl: string, options?: RequestInit) {
 		super(baseUrl, options);
 	}
 
