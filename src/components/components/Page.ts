@@ -4,13 +4,13 @@ import { ensureElement } from "../../utils/utils";
 
 interface IPage {
     counter: number;
-    gallery: HTMLElement[];
+    catalog: HTMLElement[];
     locked: boolean;
 }
 
 export class Page extends Component<IPage> {
     protected _counter: HTMLElement;
-    protected _gallery: HTMLElement;
+    protected _catalog: HTMLElement;
     protected _wrapper: HTMLElement;
     protected _basket: HTMLElement;
 
@@ -19,7 +19,7 @@ export class Page extends Component<IPage> {
         super(container);
 
         this._counter = ensureElement<HTMLElement>('.header__basket-counter');
-        this._gallery = ensureElement<HTMLElement>('.gallery');
+        this._catalog = ensureElement<HTMLElement>('.gallery');
         this._wrapper = ensureElement<HTMLElement>('.page__wrapper');
         this._basket = ensureElement<HTMLElement>('.header__basket');
 
@@ -32,8 +32,8 @@ export class Page extends Component<IPage> {
         this.setText(this._counter, String(value));
     }
 
-    set gallery(items: HTMLElement[]) {
-        this._gallery.replaceChildren(...items);
+    set catalog(items: HTMLElement[]) {
+        this._catalog.replaceChildren(...items);
     }
 
     set locked(value: boolean) {

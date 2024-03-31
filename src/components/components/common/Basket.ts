@@ -17,7 +17,7 @@ export class Basket extends Component<IBasket> {
 
         this._list = ensureElement<HTMLElement>('.basket__list', this.container);
         this._total = this.container.querySelector('.basket__price');
-        this._button = this.container.querySelector('.button');
+        this._button = this.container.querySelector('.basket__button');
 
         if (this._button) {
             this._button.addEventListener('click', () => {
@@ -31,6 +31,7 @@ export class Basket extends Component<IBasket> {
     set items(items: HTMLElement[]) {
         if (items.length) {
             this._list.replaceChildren(...items);
+            this._button.disabled = false;
         } else {
             this._list.replaceChildren(createElement<HTMLParagraphElement>('p', {
                 textContent: 'Корзина пуста'
@@ -40,6 +41,6 @@ export class Basket extends Component<IBasket> {
     }
 
     set total(total: number) {
-        this.setText(this._total, total);
+        this.setText(this._total, total.toString() + ' синапсов');
     }
 }

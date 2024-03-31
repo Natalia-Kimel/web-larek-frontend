@@ -1,12 +1,35 @@
 import {Component} from "./base/Component";
 import { ensureElement } from "../../utils/utils";
-import { ItemCategory, BasketItemIndex } from "../../types";
+import { ItemCategory, BasketItemIndex, IItemCard } from "../../types";
+
+export interface IItem<T> {
+    id: string;
+	index: number;
+	title: string;
+	description: string;
+	price: string;
+	image: string;
+	category: string;
+	status: T;
+}
 
 interface ICardActions {
     onClick: (event: MouseEvent) => void;
 }
 
-export class Card<T> extends Component<T> {
+type CatalogItemStatus = {
+    status: boolean;
+}
+
+const ProductCategory = {
+	['софт-скил']: 'soft',
+	['другое']: 'other',
+    ['дополнительное']: 'additional',
+	['кнопка']: 'button',
+    ['хард-скил']: 'hard',
+};
+
+export class Card<T> extends Component<IItem<T>> {
     protected _title: HTMLElement;
     protected _description: HTMLElement;
     protected _image: HTMLImageElement;
@@ -18,7 +41,7 @@ export class Card<T> extends Component<T> {
         super(container);
 
         this._title = ensureElement<HTMLElement>(`.${blockName}__title`, container);
-        this._image = ensureElement<HTMLImageElement>(`.${blockName}__image`, container);
+        this._image = container.querySelector(`.${blockName}__image`);
         this._description = container.querySelector(`.${blockName}__description`);
         this._category = container.querySelector(`.${blockName}__category`);
         this._price = container.querySelector(`.${blockName}__price`);
@@ -65,32 +88,53 @@ export class Card<T> extends Component<T> {
         return this._description.textContent || '';
     }
 
-    set category(value: ItemCategory) {
-        this.setText(this._category, value);
+    set category(value: keyof typeof ProductCategory) {
+		if (this._category) {
+			this.setText(this._category, value);
+			const categoryStyle = `card__category_${ProductCategory[value]}`;
+			this._category.classList.add(categoryStyle);
+		}
     }
 
-    get category(): string {
-        return this._category.textContent || '';
+    get category(): keyof typeof ProductCategory {
+        return this._category.textContent as keyof typeof ProductCategory;
     }
 
-    set price(value: number) {
-        this.setText(this._price, value.toString());
+    set price(value: string | null) {
+        this.setText(this._price, value ?? '');
     }
 
     get price(): string {
-        return this._price.textContent || '';
-    }
+		return this._price.textContent || null;
+	}
 }
 
 export class BasketItem extends Card<BasketItemIndex> {
 	protected _index: HTMLElement;
 
-	constructor(protected blockName: string, container: HTMLElement, actions?: ICardActions) {
-		super(blockName, container, actions);
+	constructor(container: HTMLElement, actions?: ICardActions) {
+		super('card', container, actions);
 		this._index = ensureElement<HTMLElement>(`.basket__item-index`, container);
 	}
 
 	set index(value: number) {
 		this.setText(this._index, value.toString());
+	}
+}
+
+export class CatalogItem extends Card<CatalogItemStatus> {
+	constructor(container: HTMLElement, actions?: ICardActions) {
+		super('card', container, actions);
+	}
+
+	set status({ status }: CatalogItemStatus) {
+		if (this._button) {
+			if (this.price === null) {
+				this.setText(this._button, 'Недоступно');
+				this._button.disabled = true;
+			} else {
+				this.setText(this._button, status ? 'В корзине' : 'В корзину');
+			}
+		}
 	}
 }

@@ -1,20 +1,22 @@
 import {Form} from "./common/Form";
 import { IOrderForm } from "../../types";
 import {IEvents} from "./base/Events";
-import { ensureAllElements } from "../../utils/utils";
+import { ensureAllElements, ensureElement } from "../../utils/utils";
 
 export class Order extends Form<IOrderForm> {
-    protected _altButtons: HTMLButtonElement[];
+    protected _altButtons?: HTMLButtonElement[];
 
     constructor(container: HTMLFormElement, events: IEvents) {
         super(container, events);
-        this._altButtons = ensureAllElements<HTMLButtonElement>('.button_alt', this.container);
 
+        this._altButtons = ensureAllElements<HTMLButtonElement>('.button_alt', this.container);
         this._altButtons.forEach(button => {
             button.addEventListener('click', () => {
-              container.querySelector('.button_alt-active').classList.remove('button_alt-active');
-              button.classList.add('button_alt-active');
-              this.method = button.name;
+                this._altButtons.forEach(button => {
+                    button.classList.toggle('button_alt-active', false);
+                })
+                button.classList.toggle('button_alt-active', true);
+                this.method = button.name;
             });
         });
     }

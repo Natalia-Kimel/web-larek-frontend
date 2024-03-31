@@ -11,34 +11,36 @@ export interface IItemCard {
     title: string;
     description: string;
     image: string;
-    category: ItemCategory;
-    price: number;
+    category: string;
+    price: number | null;
+    status: boolean;
 }
 
 export interface IItemList {
     total: number;
-    item: IItemCard[];
+    items: IItemCard[];
 }
 
 export interface IBasket {
     item: IItemCard[];
-    price: number;
+    price: string;
 }
 
 export interface IOrderForm {
     address: string;
     email: string;
     phone: string;
-    button: string;
+    payment: string;
 }
 
 export interface IOrder extends IOrderForm {
     items: string[];
+    total: number;
 }
 
-export interface IOrderResult {
+export interface IOrderResult extends IOrder {
     id: string;
-    total: number;
+    error?: string
 }
 
 export interface IAppState {

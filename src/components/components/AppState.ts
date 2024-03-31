@@ -1,12 +1,23 @@
 import { IAppState, IItemCard, IOrder, IOrderForm, FormErrors } from "../../types";
 import { Model } from "./base/Model";
 
+export type CatalogChangeEvent = {
+    catalog: IItemCard[]
+};
+
 export class AppState extends Model<IAppState> {
-    basket: string[];
-    catalog: IItemCard[];
-    order: IOrder;
+    basket: string[] = [];
+    catalog: IItemCard[] = [];
+    order: IOrder = {
+        items: [],
+        address: '',
+        email: '',
+        phone: '',
+        payment: '',
+        total: 0
+    };
     preview: string | null;
-    formErrors: FormErrors;
+    formErrors: FormErrors = {};
 
     addItemToBasket(item: IItemCard) {
         if(this.basket.includes(item.id)) return;
@@ -16,9 +27,12 @@ export class AppState extends Model<IAppState> {
 
     removeItemFromBasket(item: IItemCard) {
         if(this.basket.includes(item.id)) {
-            this.basket.filter((it) => it !== item.id)
+            const index = this.basket.indexOf(item.id);
+            this.basket.splice(index, 1);
+            this.emitChanges('basket:open', { basket: this.basket });
             this.emitChanges('items:changed', { basket: this.basket });
         }
+        return;
     }
 
     clearBasket() {
@@ -30,16 +44,20 @@ export class AppState extends Model<IAppState> {
         return this.catalog.filter(item => this.basket.includes(item.id));
     }
 
+    getTotal() {
+        return this.basket.reduce((a, c) => a + this.catalog.find(it => it.id === c).price, 0)
+    }
+
     setOrderField(field: keyof IOrderForm, value: string) {
         this.order[field] = value;
 
-        if (this.validateOrder()) {
+        if (this.validateOrder(field)) {
             this.events.emit('order:ready', this.order);
         }
-    }
 
-    getTotal() {
-        return this.order.items.reduce((a, c) => a + this.catalog.find(it => it.id === c).price, 0)
+        if (this.validateContacts(field)) {
+            this.events.emit('contacts:ready', this.order);
+        }
     }
 
     setCatalog(items: IItemCard[]) {
@@ -52,16 +70,37 @@ export class AppState extends Model<IAppState> {
         this.emitChanges('preview:changed', item);
     }
 
-    validateOrder() {
-        const errors: typeof this.formErrors = {};
-        if (!this.order.email) {
-            errors.email = 'Необходимо указать email';
+    validateOrder(field: keyof IOrder) {
+		const errors: FormErrors = {};
+        if (field !== 'email' && field !== 'phone') {
+		if (!this.order.address) errors.address = 'Необходимо указать адрес';
+		else if (!this.order.payment)
+			errors.address = 'Необходимо выбрать способ оплаты';
+		this.formErrors = errors;
+		this.events.emit('paymentformErrors:change', this.formErrors);
+		return Object.keys(errors).length === 0;
         }
-        if (!this.order.phone) {
-            errors.phone = 'Необходимо указать телефон';
-        }
-        this.formErrors = errors;
-        this.events.emit('formErrors:change', this.formErrors);
-        return Object.keys(errors).length === 0;
+	}
+
+    validateContacts(field: keyof IOrder) {
+		const errors: FormErrors = {};
+		if (field !== 'address' && field !== 'payment') {
+        if (!this.order.email) errors.email = 'Необходимо указать email';
+		if (!this.order.phone) errors.phone = 'Необходимо указать телефон';
+		this.formErrors = errors;
+		this.events.emit('contactsformErrors:change', this.formErrors);
+		return Object.keys(errors).length === 0;
+	    }
+    }
+
+    clearOrder() {
+        this.order = {
+			address: '',
+			email: '',
+			phone: '',
+            payment: null,
+			total: 0,
+			items: [],
+		};
     }
 }

@@ -24,7 +24,7 @@ export class Form<T> extends Component<IFormState> {
             this.onInputChange(field, value);
         });
 
-        this.container.addEventListener('submit', (e: Event) => {
+        this._submit.addEventListener('click', (e: Event) => {
             e.preventDefault();
             this.events.emit(`${this.container.name}:submit`);
         });
@@ -35,6 +35,7 @@ export class Form<T> extends Component<IFormState> {
             field,
             value
         });
+       
     }
 
     set valid(value: boolean) {

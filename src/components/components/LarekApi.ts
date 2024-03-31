@@ -4,16 +4,22 @@ import { IItemCard, IItemList, IOrderResult, IOrder } from "../../types";
 export class LarekApi extends Api {
 	readonly cdn: string;
 
-	constructor(cdn: string, baseUrl: string, options?: RequestInit) {
+	constructor(baseUrl: string, cdn: string, options?: RequestInit) {
 		super(baseUrl, options);
+		this.cdn = cdn;
 	}
 
-	async getProducts(): Promise<IItemList> {
-		return (await this.get('/item/')) as IItemList;
+	async getProducts(): Promise<IItemCard[]> {
+		return this.get('/product/').then((data: IItemList) =>
+			data.items.map((item) => ({
+				...item,
+				image: this.cdn + item.image
+			}))
+		);
 	}
 
 	async getProduct(id: string): Promise<IItemCard> {
-		return (await this.get(`/item/${id}`)) as IItemCard;
+		return (await this.get(`/product/${id}`)) as IItemCard;
 	}
 
 	async createOrder(order: IOrder): Promise<IOrderResult> {
