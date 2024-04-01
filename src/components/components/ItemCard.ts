@@ -92,7 +92,7 @@ export class Card<T> extends Component<IItem<T>> {
 		if (this._category) {
 			this.setText(this._category, value);
 			const categoryStyle = `card__category_${ProductCategory[value]}`;
-			this._category.classList.add(categoryStyle);
+            this.toggleClass(this._category, categoryStyle, true)
 		}
     }
 
@@ -131,9 +131,10 @@ export class CatalogItem extends Card<CatalogItemStatus> {
 		if (this._button) {
 			if (this.price === null) {
 				this.setText(this._button, 'Недоступно');
-				this._button.disabled = true;
+                this.setDisabled(this._button, true)
 			} else {
-				this.setText(this._button, status ? 'В корзине' : 'В корзину');
+				this.setText(this._button, status ? 'Уже в корзине' : 'В корзину');
+                this.setDisabled(this._button, status)
 			}
 		}
 	}

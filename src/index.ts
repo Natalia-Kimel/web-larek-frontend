@@ -6,7 +6,7 @@ import { API_URL, CDN_URL } from './utils/constants';
 import { Component } from './components/components/base/Component';
 import { EventEmitter } from './components/components/base/Events';
 import { Model } from './components/components/base/Model';
-import { Basket } from './components/components/common/Basket';
+import { Basket } from './components/components/Basket';
 import { Modal } from './components/components/common/Modal';
 import { AppState, CatalogChangeEvent } from './components/components/AppState';
 import { Card, BasketItem, CatalogItem } from './components/components/ItemCard';
@@ -128,23 +128,19 @@ events.on('contacts:submit', () => {
                     modal.close();
                     appData.clearBasket();
                     events.emit('items:changed');
+                    events.emit('order:clear');
                 }
             });
 
             modal.render({
                 content: success.render({
-                    title: !result.error ? 'Заказ оформлен' : 'Ошибка оформления заказа',
+                    title: 'Заказ оформлен',
 					description: !result.error ? `Списано ${result.total} синапсов` : result.error
                 })
             });
         })
-        .catch(err => {
-            console.error(err);
-        })
-        .finally(() => {
-			events.emit('order:clear');
-		});
-});
+        .catch(console.error)
+    });
 
 // Очистить формы
 events.on('order:clear', () => {
@@ -219,6 +215,4 @@ events.on('modal:close', () => {
 // Получаем карточки с сервера
 api.getProducts()
     .then(appData.setCatalog.bind(appData))
-    .catch(err => {
-        console.error(err);
-    });
+    .catch(console.error);
